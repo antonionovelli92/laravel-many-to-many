@@ -49,3 +49,5 @@ Route::middleware('auth')->name('profile.')->prefix('/profile')->group(function 
 });
 
 require __DIR__ . '/auth.php';
+
+Route::resource('admin/tags', App\Http\Controllers\Admin\TagController::class, ['as' => 'admin']);

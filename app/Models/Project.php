@@ -17,4 +17,10 @@ class Project extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    // Assegno la relazione con i tag
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
 }

@@ -88,7 +88,8 @@
                     <td>
                         <div class="d-flex justify-content-end align-items-center">
                             {{-- ? Btn-dettaglio --}}
-                            <a href="{{ route('admin.projects.show', $project->id) }}" class="btn btn-small btn-primary">
+                            <a href="{{ route('admin.projects.show', $project->id) }}"
+                                class="animation btn btn-small btn-primary">
                                 <i class="fa-solid fa-eye"></i>
                             </a>
                             {{-- ? Btn-modifica --}}

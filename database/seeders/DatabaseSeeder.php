@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,6 +15,6 @@ class DatabaseSeeder extends Seeder
     {
 
         // Rircodati l'ordine, prima le entità forti!
-        $this->call([UserSeeder::class, Category::class, ProjectSeeder::class, Category::class]);
+        $this->call([UserSeeder::class, TagSeeder::class,  CategorySeeder::class, ProjectSeeder::class]);
     }
 }
