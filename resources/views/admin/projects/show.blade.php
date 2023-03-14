@@ -43,7 +43,7 @@
                 <form action="{{ route('admin.projects.toggle', $project->id) }}" method="POST">
                     @method('PATCH')
                     @csrf
-                    <button type="submit" class="mt-3 btn btn-{{ $project->is_published ? 'danger' : 'success' }}">
+                    <button type="submit" class="my-5 btn btn-{{ $project->is_published ? 'danger' : 'success' }}">
                         {{ $project->is_published ? 'Metti in bozza' : 'Pubblica' }}
                     </button>
                 </form>
@@ -55,7 +55,7 @@
                 @endif
 
                 @forelse ($project->tags as $tag)
-                    <span class="span badge rounded-pill  mt-5 text-bg-{{ $tag->color }}">{{ $tag->label }}</span>
+                    <span class="span badge rounded-pill  mt-2 text-bg-{{ $tag->color }}">{{ $tag->label }}</span>
                 @empty
                     -
                 @endforelse

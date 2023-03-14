@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Project;
+use App\Models\Tag;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Generator as Faker;
@@ -20,6 +21,12 @@ class ProjectSeeder extends Seeder
         // $max = Category::count();
         $category_ids = Category::select('id')->pluck('id')->toArray();
         $category_ids[] = null;
+
+
+        // recupero gli id dei tag esistenti
+        $tag_ids = Tag::select('id')->pluck('id')->toArray();
+
+
         for ($i = 0; $i < 5; $i++) {
             $project = new Project();
 
@@ -37,11 +44,15 @@ class ProjectSeeder extends Seeder
 
 
 
-
-
-
-
             $project->save();
+
+            // dopo aver salvato il progetto nel db genero a caso gli id relazionati con i progetti
+            $project_tags = [];
+
+            foreach ($tag_ids as $tag_id) {
+                if ($faker->boolean()) $project_tags[] = $tag_id;
+            }
+            $project->tags()->attach($project_tags);
         }
     }
 }
