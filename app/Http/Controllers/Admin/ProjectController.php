@@ -6,6 +6,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -58,7 +59,11 @@ class ProjectController extends Controller
         // passo un project vuoto per 'ingannare' il form
         $project = new Project;
         $categories = Category::orderBy('label')->get();
-        return view('admin.projects.create', compact('project', 'categories'));
+        // Con 'select' prendo solo quello che mi serve
+        $tags = Tag::select('id', 'label')->orderBy('id')->get();
+
+
+        return view('admin.projects.create', compact('project', 'categories', 'tags'));
     }
 
     /**
@@ -79,6 +84,7 @@ class ProjectController extends Controller
             'url_project' => 'nullable|url',
             'url_generic' => 'nullable|url',
             'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|exists:tags,id',
         ], [
             'title.required' => 'Il titolo è obbligatorio',
             'title.unique' => "Esiste già un progetto chiamato $request->title",
@@ -99,6 +105,8 @@ class ProjectController extends Controller
             'url_project.url' => 'il link del progetto deve essere valido',
             'url_generic.url' => 'il link generico deve essere valido',
             'category_id' => 'Categoria non valida',
+            'tags' => 'i tag selezionati non sono validi',
+
 
 
         ]);
@@ -122,6 +130,9 @@ class ProjectController extends Controller
         $project->is_published = Arr::exists($data, 'is_published');
         $project->save();
 
+        // Relaziono il progetto con il-i tag
+        if (Arr::exists($data, 'tags')) $project->tags()->attach($data['tags']);
+
         return to_route('admin.projects.show', $project->id)->with('type', 'success')->with('msg', 'Nuovo incredibile progetto inserito con successo!');
     }
 
@@ -139,8 +150,14 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $categories = Category::orderBy('label')->get();
+        $tags = Tag::select('id', 'label')->orderBy('id')->get();
 
-        return view('admin.projects.edit', compact('project', 'categories'));
+        // aggiungo anhe questa per ottenere [1, 6]
+        $project_tags = $project->tags->pluck('id')->toArray();
+
+        // $project->tags->pluck('id')->toArrey()
+
+        return view('admin.projects.edit', compact('project', 'tags', 'categories', 'project_tags'));
     }
 
     /**
@@ -159,6 +176,8 @@ class ProjectController extends Controller
             'url_project' => 'nullable|url',
             'url_generic' => 'nullable|url',
             'category_id' => 'nullable|exists:categories,id',
+            'tags' => 'nullable|exists:tags,id',
+
 
         ], [
             'title.required' => 'Il titolo è obbligatorio',
@@ -180,6 +199,8 @@ class ProjectController extends Controller
             'url_project.url' => 'il link del progetto deve essere valido',
             'url_generic.url' => 'il link generico deve essere valido',
             'category_id' => 'Categoria non valida',
+            'tags' => 'i tag selezionati non sono validi',
+
 
 
         ]);
@@ -196,6 +217,14 @@ class ProjectController extends Controller
 
         $data['is_published'] = Arr::exists($data, 'is_published');
         $project->update($data);
+
+
+        // Assegno i tags
+        if (Arr::exists($data, 'tags')) $project->tags()->sync($data['tags']);
+        else   if (count($project->tags)) $project->tags()->detach();
+
+
+
         return to_route('admin.projects.show', $project->id)->with('type', 'success')->with('msg', 'Questo fantastico progetto è stato modificato con successo!');
     }
 
@@ -206,6 +235,9 @@ class ProjectController extends Controller
     {
         // eliminare l'immagine se no rimane in memoria
         if ($project->image) Storage::delete($project->image);
+
+        // tags
+        if (count($project->tags)) $project->tags()->detach();
 
         $project->delete();
         return to_route('admin.projects.index')->with('type', 'danger')->with('msg', "il progetto '$project->title' è stato eliminato con successo");

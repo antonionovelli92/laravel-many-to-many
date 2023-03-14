@@ -159,7 +159,7 @@
     </div>
     {{-- STATO --}}
     <div class="row ">
-        <div class="col-md-12 my-5 d-flex justify-content-end ">
+        <div class="col-md-12 mt-5 d-flex justify-content-end ">
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="is_published"
                     name="is_published" @if (old('is_published', $project->is_published)) checked @endif>
@@ -168,7 +168,23 @@
 
         </div>
     </div>
-
+    {{-- TAGS --}}
+    <div class="row mb-5">
+        <div class="col-10">
+            @foreach ($tags as $tag)
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="tag-{{ $loop->iteration }}"
+                        value="{{ $tag->id }}" name="tags[]" @if (in_array($tag->id, old('tags', $project_tags ?? []))) checked @endif>
+                    <label class="form-check-label" for="tag-{{ $loop->iteration }}">{{ $tag->label }}</label>
+                </div>
+            @endforeach
+            @error('tags')
+                <div class="invalid-feedback d-block">
+                    {{ $message }}
+                </div>
+            @enderror
+        </div>
+    </div>
 </div>
 
 
