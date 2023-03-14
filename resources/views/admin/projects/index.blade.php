@@ -41,6 +41,8 @@
                 <th scope="col">Title</th>
                 <th scope="col">Author</th>
                 <th scope="col">Categoria</th>
+                <th scope="col">Tag</th>
+
                 {{-- <th scope="col">Description</th> --}}
                 {{-- <th scope="col">Slug</th> --}}
                 <th scope="col">Stato</th>
@@ -68,6 +70,15 @@
                         @endif
 
                     </td>
+                    <td>
+                        @forelse ($project->tags as $tag)
+                            <span
+                                class="span badge rounded-pill mx-2 text-bg-{{ $tag->color }}">{{ $tag->label }}</span>
+                        @empty
+                            -
+                        @endforelse
+                    </td>
+
                     {{-- <td>{{ $project->description }}</td> --}}
                     {{-- <td>{{ $project->slug }}</td> --}}
                     <td>

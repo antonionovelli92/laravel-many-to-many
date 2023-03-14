@@ -53,6 +53,13 @@
                 @else
                     -
                 @endif
+
+                @forelse ($project->tags as $tag)
+                    <span class="span badge rounded-pill  mt-5 text-bg-{{ $tag->color }}">{{ $tag->label }}</span>
+                @empty
+                    -
+                @endforelse
+
             </div>
 
         </div>
